@@ -1,5 +1,5 @@
-RNA Algorithm Wars Data Tables Backend
-======================================
+RNA Algorithm Wars Backend API
+===============================
 
 Authors:
 Aayush Gopal Dawra
