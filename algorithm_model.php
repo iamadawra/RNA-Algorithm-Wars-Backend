@@ -12,13 +12,6 @@ class AlgorithmModel{
 		//implementation
 	}
 
-	//Overloaded method for fetching a method with a
-	//specified rating
-	function get_algorithm($id,$difficulty){
-		//Implementation
-	}
-
-
 	//Gets algorithms with ratings between ratingA and ratingB
 	function get_algorithms_between($ratingA, $ratingB){
 		//Implementation
