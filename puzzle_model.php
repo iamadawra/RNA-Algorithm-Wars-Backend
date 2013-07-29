@@ -29,6 +29,22 @@ class EternaPuzzleModel {
     return null;
   }
 
+  function get_favored_puzzles($numpuzzles) {
+    $query = "SELECT node.nid AS id, node.created AS created, puz.field_puzzle_rating AS rating, puz.field_puzzle_rna_type_value AS rna_type, puz.field_puzzle_type_value AS 'type', puz.field_structure_value AS 'secstruct', puz.field_puzzle_num_cleared_value AS 'num-cleared' FROM node node, content_type_puzzle puz WHERE node.nid = puz.nid AND node.status <> 0 AND puz.field_puzzle_type_value != \"Experimental\"";
+    $order = "ORDER BY puz.field_puzzle_numvotes DESC";
+    $limit = "LIMIT $numpuzzles";
+    $full_query = "$query $order $limit";
+    $result = db_query($full_query);
+    $puzzles = array();
+
+    while($res = db_fetch_array($result)) {
+      array_push($puzzles, $res);
+    }
+
+    return $puzzles;
+
+  }
+
   function get_rated_puzzles($min, $max) {
     $query = "SELECT node.nid AS id, node.created AS created, puz.field_puzzle_rating AS rating, puz.field_puzzle_rna_type_value AS rna_type, puz.field_puzzle_type_value AS 'type', puz.field_structure_value AS 'secstruct', puz.field_puzzle_num_cleared_value AS 'num-cleared' FROM node node, content_type_puzzle puz WHERE node.nid = puz.nid AND node.status <> 0 AND puz.field_puzzle_type_value != \"Experimental\"";
     if($max != -1) $where = "WHERE rating >= " . $min . " AND rating < " . $max;
