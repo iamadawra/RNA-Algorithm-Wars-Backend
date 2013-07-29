@@ -1,6 +1,6 @@
 <?php
 
-class AlgorithmModel{
+class EternaAlgorithmsModel{
 
 	##################################
 	##  Getter Methods
@@ -17,8 +17,23 @@ class AlgorithmModel{
 		//Implementation
 	}
 
+	//Gets all the algorithms by a particular rating
+	function get_algorithms_by_rating($rating){
+		//Implementation
+	}
+
 	//Gets the top numofAlgorithms algorithms based on the number of votes
 	function get_top_voted_algorithms($numofAlgorithms){
+		//Implementation
+	}
+
+	//Gets the rating of a particular algorithm
+	function get_algorithm_rating($id){
+		//Implementation
+	}
+
+	//Get Algorithm ranking
+	function get_algorithm_ranking($id){
 		//Implementation
 	}
 
@@ -48,6 +63,16 @@ class AlgorithmModel{
 
 	//Remove a vote for a particular algorithm by a given user
 	function remove_algorithm_vote($uid, $aid){
+		//Implementation
+	}
+
+	//Set all algorithm ratings to default
+	function set_default_ratings_for_all($defaultRating){
+		//Implementatio
+	}
+
+	//Update Algorithm rating
+	function update_algorithm_rating($id){
 		//Implementation
 	}
 }
