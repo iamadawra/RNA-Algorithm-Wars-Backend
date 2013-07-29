@@ -28,9 +28,9 @@ class EternaPuzzleModel {
   }
 
   function get_rated_puzzles($min, $max) {
-    $query = "SELECT node.nid AS id, node.created AS created, puz.field_puzzle_rna_type_value AS rna_type, puz.field_puzzle_type_value AS 'type', puz.field_structure_value AS 'secstruct', puz.field_puzzle_num_cleared_value AS 'num-cleared' FROM node node, content_type_puzzle puz WHERE node.nid = puz.nid AND node.status <> 0 AND puz.field_puzzle_type_value != \"Experimental\"";
-    if($max != -1) $where = "WHERE node.rating >= " . $min . " AND node.rating < " . $max;
-    else $where = "WHERE node.rating >= " . $min;
+    $query = "SELECT node.nid AS id, node.created AS created, puz.field_puzzle_rating AS rating, puz.field_puzzle_rna_type_value AS rna_type, puz.field_puzzle_type_value AS 'type', puz.field_structure_value AS 'secstruct', puz.field_puzzle_num_cleared_value AS 'num-cleared' FROM node node, content_type_puzzle puz WHERE node.nid = puz.nid AND node.status <> 0 AND puz.field_puzzle_type_value != \"Experimental\"";
+    if($max != -1) $where = "WHERE rating >= " . $min . " AND rating < " . $max;
+    else $where = "WHERE rating >= " . $min;
     $result = db_query($query . " " . $where);
     $puzzles = array();
     
@@ -59,6 +59,24 @@ class EternaPuzzleModel {
 
   function get_expert_puzzles() {
     return get_rated_puzzles(2000, -1);
+  }
+
+  function get_rnd_puzzles($numpuzzles, $numTimesTested, $constraintsAllowed) {
+    $query = "SELECT node.nid AS id, node.created AS created, puz.field_puzzle_rating AS rating, puz.field_puzzle_tested AS tested, puz.field_constraints_puzzle_value AS constraints, puz.field_puzzle_rna_type_value AS rna_type, puz.field_puzzle_type_value AS 'type', puz.field_structure_value AS 'secstruct', puz.field_puzzle_num_cleared_value AS 'num-cleared' FROM node node, content_type_puzzle puz WHERE node.nid = puz.nid AND node.status <> 0 AND puz.field_puzzle_type_value != \"Experimental\"";
+    $where = "";
+    if($constraintsAllowed == 0) $where = "WHERE constraints IS NULL";
+    if($constraintsAllowed == 1) $where = "WHERE constraints IS NOT NULL";
+
+    // commas are delimeter, no spaces
+
+    $result = $db_query($query);
+    $puzzles = array();
+    while($res = db_fetch_array($result)) {
+      if( ($numTimesTested < 0) || (substr_count($res['tested'], ',') + 1 == $numTimesTested))
+        array_push($puzzles, $res);
+    }
+
+    return array_rand($puzzles, $numpuzzles);
   }
 
   // Method of function overloading
