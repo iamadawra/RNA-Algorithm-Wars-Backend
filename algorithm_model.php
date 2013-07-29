@@ -1,6 +1,6 @@
 <?php
 
-class AlgorithmModel{
+class EternaAlgorithmsModel{
 
 	##################################
 	##  Getter Methods
@@ -68,7 +68,7 @@ class AlgorithmModel{
 
 	//Set all algorithm ratings to default
 	function set_default_ratings_for_all($defaultRating){
-		//Implementation
+		//Implementatio
 	}
 
 	//Update Algorithm rating
