@@ -11,6 +11,6 @@ Tables to be created:
 - Algorithm Model
 - Algorithm puzzle matches
 
-Tables to be udpated:
+Tables to be updated:
 - Puzzles
 - Scripts

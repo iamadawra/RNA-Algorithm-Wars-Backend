@@ -72,7 +72,8 @@ class EternaAlgorithmsModel{
 	//Get Algorithm ranking
 	function get_algorithm_ranking($id){
 		$algorithms = get_all_algorithms();
-		for($i = 0; $i < $numrows; $i++) {
+		$len = count($algorithms);
+		for($i = 0; $i < $len; $i++) {
 			if($algorithms[$i]["id"] == $id) return ($i + 1);
 		}
 		return null;
@@ -83,18 +84,53 @@ class EternaAlgorithmsModel{
 	##################################
 
 	//Adds an algorithm to the database
-	function add_algorithm($algorithm){
-		//Implementation
+	function add_algorithm($args, $uid, $user_model){
+		
+		if(!$user_model) {
+			eterna_utils_log_error("Cannot find user model - please contact admin");
+      		return NULL;
+		}
+
+		$current_time = time();
+
+    	$node = new stdClass();
+    	$node->uid = $uid;
+    	$node->status = 1;
+    	$node->type = "algorithm_wars_algorithms";
+    	$node->created = $current_time;
+    	$node->comment = 2;
+    	$node->title = $args['title'];
+    	$node->body = $args['body'];
+
+    	$node->field_algorithm_rating[0]['value'] = 1200;
+    	$node->field_algorithm_code[0]['value'] = $args['code'];
+    	$node->field_algorithm_votes[0]['value'] = 0;
+    	$node->field_algorithm_description[0]['value'] = $args['description'];
+    	$node->field_algorithm_tested_puzzles[0]['value'] = "";
+    	$node->field_algorithm_times_tested[0]['value'] = 0;
+    	$node->field_algorithm_input[0]['value'] = $args['input'];
+
+    	node_save($node);
+
+    	if(!$node->nid) {
+    		return NULL;
+    	}
+
+    	return $node->nid;
 	}
 
 	//Deletes and algorithm from the database
-	function delete_algorithm($algorithm){
-		//Implementation
+	function delete_algorithm($aid){
+		node_delete(node_load($aid));
 	}
 
 	//Update a previous algorithm with a given ID
-	function modify_algorithm($id){
-		//Implementation
+	function modify_algorithm($id, $source) {
+		$node = node_load($aid);
+		// $tmp = $node->field_algorithm_code[0]['value'];
+    	$node->field_algorithm_code[0]['value'] = $source;
+    	node_save($node);
+    	// return $tmp; // just in case
 	}
 
 	//Add a vote for a particular algorithm by a given user
@@ -141,13 +177,23 @@ class EternaAlgorithmsModel{
 	    return db_result(db_query($query));  
 	}
 
+	function set_default_rating($defaultRating, $aid) {
+		$node = node_load($aid);
+    	$node->field_algorithm_rating[0]['value'] = $defaultRating;
+    	node_save($node);
+	}
+
 	//Set all algorithm ratings to default
 	function set_default_ratings_for_all($defaultRating){
-		// why is this necessary, upon adding, the default rating for the algorithm should be set?
+		$algorithms = get_all_algorithms();
+		$len = count($algorithms);
+		for($i = 0; $i < $len; $i++) {
+			set_default_rating($defaultRating, $algorithms[$i]["id"]);
+		}
 	}
 
 	//Update Algorithm rating
 	function update_algorithm_rating($id){
-		// What is this supposed to do???
+		// Implementation of the ELO Rating
 	}
 }
