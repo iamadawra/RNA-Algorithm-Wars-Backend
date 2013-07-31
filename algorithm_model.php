@@ -62,10 +62,16 @@ class EternaAlgorithmsModel{
 		return $algorithm["rating"];
 	}
 
-	//Get Algorithm ranking
-	function get_algorithm_ranking($id){
+	// get all algorithms
+	function get_all_algorithms() {
 		$numrows = db_result(db_query("SELECT COUNT(*) FROM content_type_algorithm_wars_algorithms"));
 		$algorithms = get_top_voted_algorithms($numrows);
+		return $algorithms;
+	}
+
+	//Get Algorithm ranking
+	function get_algorithm_ranking($id){
+		$algorithms = get_all_algorithms();
 		for($i = 0; $i < $numrows; $i++) {
 			if($algorithms[$i]["id"] == $id) return ($i + 1);
 		}
@@ -137,7 +143,7 @@ class EternaAlgorithmsModel{
 
 	//Set all algorithm ratings to default
 	function set_default_ratings_for_all($defaultRating){
-		//Implementation
+		// why is this necessary, upon adding, the default rating for the algorithm should be set?
 	}
 
 	//Update Algorithm rating
