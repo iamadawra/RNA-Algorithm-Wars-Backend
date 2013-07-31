@@ -8,8 +8,14 @@ class EternaAlgorithmsModel{
 
 
 	//returns algorithm with a given id
-	function get_algorithm($id){
-		//implementation
+	function get_algorithm($nid){
+		$query = "SELECT n.title, n.created, algorithm.field_algorithm_rating_value AS rating, algorithm.field_algorithm_code_value AS code, algorithm.field_algorithm_votes_value AS numvotes, algorithm.field_algorithm_description_value AS description, algorithm.field_algorithm_times_tested_value AS timestested, algorithm.field_algorithm_tested_puzzles_value AS tested, u.uid AS uid, u.name AS username, u.picture AS userpicture, n.nid AS id, nr.body FROM content_type_algorithm_wars_algorithms algorithm LEFT JOIN node n ON algorithm.nid=n.nid LEFT JOIN node_revisions nr ON n.vid=nr.vid LEFT JOIN users u ON u.uid=n.uid WHERE n.nid=$nid"
+		$result = db_query($query);
+		if($res = db_fetch_array($result)) {
+			$res['created'] = date("d M Y", $res['created']);
+			return $res;
+		}
+		return null;
 	}
 
 	//Gets algorithms with ratings between ratingA and ratingB
