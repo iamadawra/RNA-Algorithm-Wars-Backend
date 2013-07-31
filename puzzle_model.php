@@ -81,6 +81,52 @@ class EternaPuzzleModel {
     return get_rated_puzzles(2000, -1);
   }
 
+  function addPuzzleVote($uid, $pid) {
+  	// check if vote already exists
+  	// check if user has maxed out his num votes
+
+  	// votes is like "", "3,", "3,5", etc...
+    $votes = $user_model->get_uservotes($uid);
+
+    if(substr_count($votes, ',') >= 5) {
+    	// You can only vote for 5 puzzles
+    	eterna_utils_log_error("You can only vote for a maximum of 5 puzzles!");
+    	return false;
+    }
+
+    if(strpos($votes, $pid) !== false) {
+    	// found already
+    	eterna_utils_log_error("You have already voted for this puzzle.");
+    	return false;
+    }
+
+    $user_model->setuservotes($votes . $pid . ',');
+    $query = "UPDATE content_type_puzzle SET content_type_puzzle.field_puzzle_numvotes_value=content_type_puzzle.field_puzzle_numvotes_value+1 WHERE content_type_puzzle.nid=$pid";
+    return db_result(db_query($query));  
+  }
+
+  function removePuzzleVote($uid, $pid) {
+  	// check if vote exists
+  	$votes = $user_model->get_uservotes($uid);
+  	if(strpos($votes, $pid) === false) {
+  		eterna_utils_log_error("You have not voted for this puzzle yet.");
+  		return false;
+  	}
+
+  	// safely remove the search $pid without causing damage to the other ids
+  	$votes = explode(",", $votes);
+  	$newvotes = array();
+  	foreach($votes as $val) {
+  		if($val !== $pid)
+  			array_push($newvotes, $val);
+  	}
+
+  	$user_model->setuservotes($newvotes);
+    $query = "UPDATE content_type_puzzle SET content_type_puzzle.field_puzzle_numvotes_value=content_type_puzzle.field_puzzle_numvotes_value-1 WHERE content_type_puzzle.nid=$pid";
+    return db_result(db_query($query));  
+  }
+
+
   function get_rnd_puzzles($numpuzzles, $numTimesTested, $constraintsAllowed) {
     $query = "SELECT n.title, n.created, puz.field_puzzle_objective_value AS object, puz.field_puzzle_rna_type_value AS rna_type,u.uid AS uid, u.name AS username, u.picture AS userpicture, puz.field_reward_puzzle_value AS reward, puz.field_structure_value AS secstruct, puz.field_puzzle_solved_by_bot_value AS 'solved-by-bot', puz.field_puzzle_num_cleared_value AS 'num-cleared', n.nid AS id, puz.field_puzzle_locks_value AS locks, puz.field_begin_seq_value AS beginseq, puz.field_puzzle_tested_value AS tested, puz.field_puzzle_rating_value AS rating, puz.field_puzzle_numvotes_value AS numvotes, puz.field_use_tails_value AS usetails, puz.field_constraints_puzzle_value AS constraints, puz.field_scoring_puzzle_value AS scoring, puz.field_folder_puzzle_value AS folder, puz.field_made_by_player_value AS 'made-by-player',puz.field_tutorial_level_puzzle_value AS 'tutorial-level', puz.field_ui_specs_puzzle_value AS 'ui-specs', puz.field_puzzle_type_value AS 'type', puz.field_puzzle_last_synthesis_value AS 'last-round', puz.field_next_puzzle_value AS 'next-puzzle', field_puzzle_objective_value AS objective, field_puzzle_check_hairpin_value AS check_hairpin, field_puzzle_cloud_round_value AS cloud_round FROM node n, content_type_puzzle puz WHERE n = puz.nid AND n.status <> 0 AND puz.field_puzzle_type_value != \"Experimental\"";
     $where = "";
