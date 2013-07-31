@@ -216,8 +216,24 @@ class EternaUserModel {
     return $user["puzvotes"];
   }
 
+  function get_algorithmvotes($uid) {
+    $query = "SELECT u.uid, u.algorithmvotes AS algorithmvotes FROM users u LEFT JOIN userpoints up ON u.uid=up.uid LEFT JOIN fbconnect_users f ON f.uid=u.uid LEFT JOIN users_roles ur ON ur.uid=u.uid WHERE u.uid=$uid";
+    $result = db_query($query);
+    $user = array();
+    while($res = db_fetch_array($result)) {
+      array_push($user, $res);
+    }
+
+    return $user["algorithmvotes"];    
+  }
+
   function set_puzzlevotes($uid, $newvotes) {
     $query = "UPDATE users SET users.puzvotes=$newvotes WHERE users.uid=$uid";
+    return db_result(db_query($query));
+  }
+
+  function set_algorithmvotes($uid, $newvotes) {
+    $query = "UPDATE users SET users.algorithmvotes=$newvotes WHERE users.uid=$uid";
     return db_result(db_query($query));
   }
 

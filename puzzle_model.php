@@ -121,7 +121,7 @@ class EternaPuzzleModel {
   			array_push($newvotes, $val);
   	}
 
-  	$user_model->set_puzzlevotes($uid, $newvotes);
+  	$user_model->set_puzzlevotes($uid, implode(",", $newvotes));
     $query = "UPDATE content_type_puzzle SET content_type_puzzle.field_puzzle_numvotes_value=content_type_puzzle.field_puzzle_numvotes_value-1 WHERE content_type_puzzle.nid=$pid";
     return db_result(db_query($query));  
   }

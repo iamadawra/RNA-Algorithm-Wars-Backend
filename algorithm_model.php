@@ -93,21 +93,55 @@ class EternaAlgorithmsModel{
 
 	//Add a vote for a particular algorithm by a given user
 	function add_algorithm_vote($uid, $aid){
-		//Implementation
+		// check if vote already exists
+		// check if user has maxed out his num votes
+		$votes = $user_model->get_algorithmvotes($uid);
+
+		if(substr_count($votes, ',') >= 5) {
+			// only 5 algorithms
+			eterna_utils_log_error("You can only vote for a maximum of 5 algorithms!");
+			return false;
+		}
+
+		if(strpos($votes, $aid) !== false) {
+			// found already
+			eterna_utils_log_error("You have already voted for this algorithm.");
+			return false;
+		}
+
+		$user_model->set_algorithmvotes($uid, $votes . $aid . ',');
+		$query = "UPDATE content_type_algorithm_wars_algorithms SET content_type_algorithm_wars_algorithms.field_algorithm_votes_value=content_type_algorithm_wars_algorithms.field_algorithm_votes_value+1 WHERE content_type_algorithm_wars_algorithms.nid=$aid";
+		return db_result(db_query($query));
 	}
 
 	//Remove a vote for a particular algorithm by a given user
 	function remove_algorithm_vote($uid, $aid){
-		//Implementation
+		$votes = $user_model->get_algorithmvotes($uid);
+		if(strpos($votes, $pid) === false) {
+			eterna_utils_log_error("You have not voted for this algorithm yet.");
+			return false;
+		}
+
+		// safely remove the search $aid without causing damage to the other ids
+		$votes = explode(",", $votes);
+		$newvotes = array();
+		foreach($votes as $val) {
+			if($val !== $aid)
+				array_push($newvotes, $val);
+		}
+
+		$user_model->set_algorithmvotes($uid, implode(",", $newvotes));
+		$query = "UPDATE content_type_algorithm_wars_algorithms SET content_type_algorithm_wars_algorithms.field_algorithm_votes_value=content_type_algorithm_wars_algorithms.field_algorithm_votes_value-1 WHERE content_type_algorithm_wars_algorithms.nid=$aid";
+	    return db_result(db_query($query));  
 	}
 
 	//Set all algorithm ratings to default
 	function set_default_ratings_for_all($defaultRating){
-		//Implementatio
+		//Implementation
 	}
 
 	//Update Algorithm rating
 	function update_algorithm_rating($id){
-		//Implementation
+		// What is this supposed to do???
 	}
 }
