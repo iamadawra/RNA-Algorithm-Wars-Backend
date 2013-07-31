@@ -86,7 +86,7 @@ class EternaPuzzleModel {
   	// check if user has maxed out his num votes
 
   	// votes is like "", "3,", "3,5", etc...
-    $votes = $user_model->get_uservotes($uid);
+    $votes = $user_model->get_puzzlevotes($uid);
 
     if(substr_count($votes, ',') >= 5) {
     	// You can only vote for 5 puzzles
@@ -100,14 +100,14 @@ class EternaPuzzleModel {
     	return false;
     }
 
-    $user_model->setuservotes($votes . $pid . ',');
+    $user_model->set_puzzlevotes($uid, $votes . $pid . ',');
     $query = "UPDATE content_type_puzzle SET content_type_puzzle.field_puzzle_numvotes_value=content_type_puzzle.field_puzzle_numvotes_value+1 WHERE content_type_puzzle.nid=$pid";
     return db_result(db_query($query));  
   }
 
   function removePuzzleVote($uid, $pid) {
   	// check if vote exists
-  	$votes = $user_model->get_uservotes($uid);
+  	$votes = $user_model->get_puzzlevotes($uid);
   	if(strpos($votes, $pid) === false) {
   		eterna_utils_log_error("You have not voted for this puzzle yet.");
   		return false;
@@ -121,7 +121,7 @@ class EternaPuzzleModel {
   			array_push($newvotes, $val);
   	}
 
-  	$user_model->setuservotes($newvotes);
+  	$user_model->set_puzzlevotes($uid, $newvotes);
     $query = "UPDATE content_type_puzzle SET content_type_puzzle.field_puzzle_numvotes_value=content_type_puzzle.field_puzzle_numvotes_value-1 WHERE content_type_puzzle.nid=$pid";
     return db_result(db_query($query));  
   }
