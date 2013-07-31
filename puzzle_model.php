@@ -1,13 +1,15 @@
 <?php
 
-// MAKE SURE TO GO THROUGH ALL THE FUNCTIONS AT THE VERY END SO THAT THE NEW COLUMNS IN THE DATABASE ARE ALSO ADDED TO THE QUERY
+// @see lines 475 and 544 - right now my code does not query cloud lab puzzles.
+// should I make it query cloud lab puzzles? if not, then can I remove the default
+// rating for those puzzles?
 
 include_once(ETERNA_WORKBRANCH_BACKEND.'eterna_utils.php');
 
 class EternaPuzzleModel {
 
   function get_puzzle($nid) {
-    $query = "SELECT n.title, n.created, puz.field_puzzle_objective_value AS object, puz.field_puzzle_rna_type_value AS rna_type,u.uid AS uid, u.name AS username, u.picture AS userpicture, puz.field_reward_puzzle_value AS reward, puz.field_structure_value AS secstruct, puz.field_puzzle_solved_by_bot_value AS 'solved-by-bot', puz.field_puzzle_num_cleared_value AS 'num-cleared', n.nid AS id, nr.body, puz.field_puzzle_locks_value AS locks, puz.field_begin_seq_value AS beginseq, puz.field_use_tails_value AS usetails, puz.field_constraints_puzzle_value AS constraints, puz.field_scoring_puzzle_value AS scoring, puz.field_folder_puzzle_value AS folder, puz.field_made_by_player_value AS 'made-by-player',puz.field_tutorial_level_puzzle_value AS 'tutorial-level', puz.field_ui_specs_puzzle_value AS 'ui-specs', puz.field_puzzle_type_value AS 'type', puz.field_puzzle_last_synthesis_value AS 'last-round', puz.field_next_puzzle_value AS 'next-puzzle', field_puzzle_objective_value AS objective, field_puzzle_check_hairpin_value AS check_hairpin, field_puzzle_cloud_round_value AS cloud_round FROM content_type_puzzle puz LEFT JOIN node n ON puz.nid=n.nid LEFT JOIN node_revisions nr ON n.vid=nr.vid LEFT JOIN users u ON u.uid=n.uid WHERE n.nid=$nid";
+    $query = "SELECT n.title, n.created, puz.field_puzzle_objective_value AS object, puz.field_puzzle_rna_type_value AS rna_type,u.uid AS uid, u.name AS username, u.picture AS userpicture, puz.field_reward_puzzle_value AS reward, puz.field_structure_value AS secstruct, puz.field_puzzle_solved_by_bot_value AS 'solved-by-bot', puz.field_puzzle_num_cleared_value AS 'num-cleared', n.nid AS id, nr.body, puz.field_puzzle_locks_value AS locks, puz.field_begin_seq_value AS beginseq, puz.field_puzzle_tested_value AS tested, puz.field_puzzle_rating_value AS rating, puz.field_puzzle_numvotes_value AS numvotes, puz.field_use_tails_value AS usetails, puz.field_constraints_puzzle_value AS constraints, puz.field_scoring_puzzle_value AS scoring, puz.field_folder_puzzle_value AS folder, puz.field_made_by_player_value AS 'made-by-player',puz.field_tutorial_level_puzzle_value AS 'tutorial-level', puz.field_ui_specs_puzzle_value AS 'ui-specs', puz.field_puzzle_type_value AS 'type', puz.field_puzzle_last_synthesis_value AS 'last-round', puz.field_next_puzzle_value AS 'next-puzzle', field_puzzle_objective_value AS objective, field_puzzle_check_hairpin_value AS check_hairpin, field_puzzle_cloud_round_value AS cloud_round FROM content_type_puzzle puz LEFT JOIN node n ON puz.nid=n.nid LEFT JOIN node_revisions nr ON n.vid=nr.vid LEFT JOIN users u ON u.uid=n.uid WHERE n.nid=$nid";
     $result = db_query($query);
     if($res = db_fetch_array($result)) {
       if($res['rna_type'] == "switch"){
@@ -28,10 +30,10 @@ class EternaPuzzleModel {
     
     return null;
   }
-
+  
   function get_favored_puzzles($numpuzzles) {
-    $query = "SELECT node.nid AS id, node.created AS created, puz.field_puzzle_rating AS rating, puz.field_puzzle_rna_type_value AS rna_type, puz.field_puzzle_type_value AS 'type', puz.field_structure_value AS 'secstruct', puz.field_puzzle_num_cleared_value AS 'num-cleared' FROM node node, content_type_puzzle puz WHERE node.nid = puz.nid AND node.status <> 0 AND puz.field_puzzle_type_value != \"Experimental\"";
-    $order = "ORDER BY puz.field_puzzle_numvotes DESC";
+    $query = "SELECT n.title, n.created, puz.field_puzzle_objective_value AS object, puz.field_puzzle_rna_type_value AS rna_type,u.uid AS uid, u.name AS username, u.picture AS userpicture, puz.field_reward_puzzle_value AS reward, puz.field_structure_value AS secstruct, puz.field_puzzle_solved_by_bot_value AS 'solved-by-bot', puz.field_puzzle_num_cleared_value AS 'num-cleared', n.nid AS id, puz.field_puzzle_locks_value AS locks, puz.field_begin_seq_value AS beginseq, puz.field_puzzle_tested_value AS tested, puz.field_puzzle_rating_value AS rating, puz.field_puzzle_numvotes_value AS numvotes, puz.field_use_tails_value AS usetails, puz.field_constraints_puzzle_value AS constraints, puz.field_scoring_puzzle_value AS scoring, puz.field_folder_puzzle_value AS folder, puz.field_made_by_player_value AS 'made-by-player',puz.field_tutorial_level_puzzle_value AS 'tutorial-level', puz.field_ui_specs_puzzle_value AS 'ui-specs', puz.field_puzzle_type_value AS 'type', puz.field_puzzle_last_synthesis_value AS 'last-round', puz.field_next_puzzle_value AS 'next-puzzle', field_puzzle_objective_value AS objective, field_puzzle_check_hairpin_value AS check_hairpin, field_puzzle_cloud_round_value AS cloud_round FROM node n, content_type_puzzle puz WHERE n = puz.nid AND n.status <> 0 AND puz.field_puzzle_type_value != \"Experimental\"";
+    $order = "ORDER BY numvotes DESC";
     $limit = "LIMIT $numpuzzles";
     $full_query = "$query $order $limit";
     $result = db_query($full_query);
@@ -46,7 +48,7 @@ class EternaPuzzleModel {
   }
 
   function get_rated_puzzles($min, $max) {
-    $query = "SELECT node.nid AS id, node.created AS created, puz.field_puzzle_rating AS rating, puz.field_puzzle_rna_type_value AS rna_type, puz.field_puzzle_type_value AS 'type', puz.field_structure_value AS 'secstruct', puz.field_puzzle_num_cleared_value AS 'num-cleared' FROM node node, content_type_puzzle puz WHERE node.nid = puz.nid AND node.status <> 0 AND puz.field_puzzle_type_value != \"Experimental\"";
+    $query = "SELECT n.title, n.created, puz.field_puzzle_objective_value AS object, puz.field_puzzle_rna_type_value AS rna_type,u.uid AS uid, u.name AS username, u.picture AS userpicture, puz.field_reward_puzzle_value AS reward, puz.field_structure_value AS secstruct, puz.field_puzzle_solved_by_bot_value AS 'solved-by-bot', puz.field_puzzle_num_cleared_value AS 'num-cleared', n.nid AS id, puz.field_puzzle_locks_value AS locks, puz.field_begin_seq_value AS beginseq, puz.field_puzzle_tested_value AS tested, puz.field_puzzle_rating_value AS rating, puz.field_puzzle_numvotes_value AS numvotes, puz.field_use_tails_value AS usetails, puz.field_constraints_puzzle_value AS constraints, puz.field_scoring_puzzle_value AS scoring, puz.field_folder_puzzle_value AS folder, puz.field_made_by_player_value AS 'made-by-player',puz.field_tutorial_level_puzzle_value AS 'tutorial-level', puz.field_ui_specs_puzzle_value AS 'ui-specs', puz.field_puzzle_type_value AS 'type', puz.field_puzzle_last_synthesis_value AS 'last-round', puz.field_next_puzzle_value AS 'next-puzzle', field_puzzle_objective_value AS objective, field_puzzle_check_hairpin_value AS check_hairpin, field_puzzle_cloud_round_value AS cloud_round FROM node n, content_type_puzzle puz WHERE n = puz.nid AND n.status <> 0 AND puz.field_puzzle_type_value != \"Experimental\"";
     if($max != -1) $where = "WHERE rating >= " . $min . " AND rating < " . $max;
     else $where = "WHERE rating >= " . $min;
     $result = db_query($query . " " . $where);
@@ -80,39 +82,29 @@ class EternaPuzzleModel {
   }
 
   function get_rnd_puzzles($numpuzzles, $numTimesTested, $constraintsAllowed) {
-    $query = "SELECT node.nid AS id, node.created AS created, puz.field_puzzle_rating AS rating, puz.field_puzzle_tested AS tested, puz.field_constraints_puzzle_value AS constraints, puz.field_puzzle_rna_type_value AS rna_type, puz.field_puzzle_type_value AS 'type', puz.field_structure_value AS 'secstruct', puz.field_puzzle_num_cleared_value AS 'num-cleared' FROM node node, content_type_puzzle puz WHERE node.nid = puz.nid AND node.status <> 0 AND puz.field_puzzle_type_value != \"Experimental\"";
+    $query = "SELECT n.title, n.created, puz.field_puzzle_objective_value AS object, puz.field_puzzle_rna_type_value AS rna_type,u.uid AS uid, u.name AS username, u.picture AS userpicture, puz.field_reward_puzzle_value AS reward, puz.field_structure_value AS secstruct, puz.field_puzzle_solved_by_bot_value AS 'solved-by-bot', puz.field_puzzle_num_cleared_value AS 'num-cleared', n.nid AS id, puz.field_puzzle_locks_value AS locks, puz.field_begin_seq_value AS beginseq, puz.field_puzzle_tested_value AS tested, puz.field_puzzle_rating_value AS rating, puz.field_puzzle_numvotes_value AS numvotes, puz.field_use_tails_value AS usetails, puz.field_constraints_puzzle_value AS constraints, puz.field_scoring_puzzle_value AS scoring, puz.field_folder_puzzle_value AS folder, puz.field_made_by_player_value AS 'made-by-player',puz.field_tutorial_level_puzzle_value AS 'tutorial-level', puz.field_ui_specs_puzzle_value AS 'ui-specs', puz.field_puzzle_type_value AS 'type', puz.field_puzzle_last_synthesis_value AS 'last-round', puz.field_next_puzzle_value AS 'next-puzzle', field_puzzle_objective_value AS objective, field_puzzle_check_hairpin_value AS check_hairpin, field_puzzle_cloud_round_value AS cloud_round FROM node n, content_type_puzzle puz WHERE n = puz.nid AND n.status <> 0 AND puz.field_puzzle_type_value != \"Experimental\"";
     $where = "";
     if($constraintsAllowed == 0) $where = "WHERE constraints IS NULL";
     if($constraintsAllowed == 1) $where = "WHERE constraints IS NOT NULL";
 
     // commas are delimeter, no spaces
+    // "" --> 0 entries, 0 commas
+    // "30," -> 1 entry, 1 comma
+    // "30,50," -> 2 entries, 2 commas
+    // "30,50,70," -> 3 entries, 3 commas
 
     $result = $db_query($query);
     $puzzles = array();
     while($res = db_fetch_array($result)) {
-      if( ($numTimesTested < 0) || (substr_count($res['tested'], ',') + 1 == $numTimesTested))
+      if( ($numTimesTested < 0) || ( substr_count($res['tested'], ',') == $numTimesTested  ))
         array_push($puzzles, $res);
     }
 
     return array_rand($puzzles, $numpuzzles);
   }
 
-  // Method of function overloading
-  function get_puzzle() {
-    switch func_num_args() {
-      case 1 : 
-        // get_puzzle($nid) - returns the puzzle with the given id, as an array of characteristics
-        return _get_puzzle(func_get_arg(0));
-      case 2 : 
-        // gets a puzzle with 
-        return __get_puzzle(func_get_arg(0), func_get_arg(1));
-      default :
-        throw new Exception("get_puzzle invalid arguments");
-    }
-  }
-
   function get_puzzles($args) {
-    $query = "SELECT n.nid AS id, n.title, n.created, u.name AS username, u.picture AS userpicture, puz.field_made_by_player_value AS 'made-by-player', puz.field_puzzle_num_cleared_value AS 'num-cleared', puz.field_puzzle_type_value AS type, puz.field_puzzle_solved_by_bot_value AS 'solved-by-bot', puz.field_reward_puzzle_value AS reward, puz.field_puzzle_made_for_lab_value AS 'made-for-lab' FROM content_type_puzzle puz LEFT JOIN node n ON n.nid=puz.nid LEFT JOIN users u ON u.uid=n.uid";
+    $query = "SELECT n.nid AS id, n.title, n.created, u.name AS username, u.picture AS userpicture, puz.field_made_by_player_value AS 'made-by-player', puz.field_puzzle_num_cleared_value AS 'num-cleared', puz.field_puzzle_type_value AS type, puz.field_puzzle_rating_value AS rating, puz.field_puzzle_tested_value AS tested, puz.field_puzzle_numvotes_value AS numvotes, puz.field_puzzle_solved_by_bot_value AS 'solved-by-bot', puz.field_reward_puzzle_value AS reward, puz.field_puzzle_made_for_lab_value AS 'made-for-lab' FROM content_type_puzzle puz LEFT JOIN node n ON n.nid=puz.nid LEFT JOIN users u ON u.uid=n.uid";
     $where = "WHERE n.status <> 0";
     
     if($args['puzzle_type'] == "Basic" ) {
@@ -256,10 +248,6 @@ class EternaPuzzleModel {
   }  
 
   function get_cleared_puzzles($uid) {
-    /*
-    * solutions.created has timestamp of puzzle solves. 
-    */
-    
     $query = "SELECT node.nid AS id, node.title, puz.field_puzzle_type_value AS 'type' FROM node node INNER JOIN flag_content flag_content_node ON node.nid = flag_content_node.content_id INNER JOIN content_type_puzzle puz ON node.nid = puz.nid WHERE node.status <> 0 AND flag_content_node.fid = 3 AND flag_content_node.content_type = \"node\" AND flag_content_node.uid = $uid AND puz.field_puzzle_type_value != \"Experimental\" AND node.status <> 0";
     $result = db_query($query);
     $puzzles = array();
@@ -302,7 +290,7 @@ class EternaPuzzleModel {
     if(!$uid)
       return null;
     
-    $query = "SELECT n.title, n.created, puz.field_puzzle_objective_value AS object, puz.field_puzzle_rna_type_value AS rna_type, puz.field_reward_puzzle_value AS reward, puz.field_puzzle_type_value AS type, puz.field_structure_value AS secstruct, n.nid AS id, puz.field_puzzle_locks_value AS locks, puz.field_begin_seq_value AS beginseq, puz.field_use_tails_value AS usetails, puz.field_constraints_puzzle_value AS constraints, puz.field_scoring_puzzle_value AS scoring, puz.field_folder_puzzle_value AS folder, puz.field_made_by_player_value AS 'made-by-player', puz.field_tutorial_level_puzzle_value AS tutorial_level, puz.field_ui_specs_puzzle_value AS ui_specs, field_puzzle_objective_value AS objective FROM content_type_puzzle puz LEFT JOIN node n ON puz.nid=n.nid LEFT JOIN flag_content flag_content_node ON (n.nid = flag_content_node.content_id AND flag_content_node.uid=$uid AND flag_content_node.fid=3 AND flag_content_node.content_type='node') WHERE n.status <> 0 AND flag_content_node.uid IS NULL AND puz.field_puzzle_type_value != 'Experimental' AND puz.field_puzzle_impossible_value IS NULL ORDER BY type ASC, puz.field_made_by_player_value ASC, reward ASC LIMIT 5";
+    $query = "SELECT n.title, n.created, puz.field_puzzle_objective_value AS object, puz.field_puzzle_rna_type_value AS rna_type, puz.field_reward_puzzle_value AS reward, puz.field_puzzle_type_value AS type, puz.field_structure_value AS secstruct, n.nid AS id, puz.field_puzzle_locks_value AS locks, puz.field_begin_seq_value AS beginseq, puz.field_puzzle_tested_value AS tested, puz.field_puzzle_rating_value AS rating, puz.field_puzzle_numvotes_value AS numvotes, puz.field_use_tails_value AS usetails, puz.field_constraints_puzzle_value AS constraints, puz.field_scoring_puzzle_value AS scoring, puz.field_folder_puzzle_value AS folder, puz.field_made_by_player_value AS 'made-by-player', puz.field_tutorial_level_puzzle_value AS tutorial_level, puz.field_ui_specs_puzzle_value AS ui_specs, field_puzzle_objective_value AS objective FROM content_type_puzzle puz LEFT JOIN node n ON puz.nid=n.nid LEFT JOIN flag_content flag_content_node ON (n.nid = flag_content_node.content_id AND flag_content_node.uid=$uid AND flag_content_node.fid=3 AND flag_content_node.content_type='node') WHERE n.status <> 0 AND flag_content_node.uid IS NULL AND puz.field_puzzle_type_value != 'Experimental' AND puz.field_puzzle_impossible_value IS NULL ORDER BY type ASC, puz.field_made_by_player_value ASC, reward ASC LIMIT 5";
         
     $result = db_query($query);
     $puzzles = array();
@@ -379,6 +367,7 @@ class EternaPuzzleModel {
     }  
     return $puzzles;
   }
+
   function post_puzzle($args,$uid,$user_model) {
       
     if (!$user_model) {
@@ -409,14 +398,14 @@ class EternaPuzzleModel {
       return NULL;
     }
     
-    /**
+    /*
     $query = "SELECT COUNT(n.nid) FROM content_type_puzzle puz LEFT JOIN node n ON n.nid=puz.nid WHERE puz.field_made_by_player_value = 1 AND n.status = 1 AND puz.field_structure_value=\"$secstruct\"";
     if(db_result(db_query($query)) > 0) {
       eterna_utils_log_error("This shape was already submitted by another player");
       /// Duplicate shape
       return false;
     }
-    **/
+    */
      
     $node = new stdClass();
     $node->uid = $uid;
@@ -428,6 +417,10 @@ class EternaPuzzleModel {
     $node->field_made_by_player[0]['value'] = 1;
     $node->comment = 2;
     $node->field_reward_puzzle[0]['value'] = 100;
+
+    $node->field_puzzle_rating[0]['value'] = 1200; // starting rating
+    $node->field_puzzle_tested[0]['value'] = ""; // has been tested by nobody
+    $node->field_puzzle_numvotes[0]['value'] = 0; // has 0 votes 
   
     $node->title = $args['title'];
     $node->body = $args['body'];
@@ -465,6 +458,7 @@ class EternaPuzzleModel {
     
     return $node->nid;
   }
+
   function edit_puzzle($nid, $uid, $params){
     $title = $params['title'];
     $description = $params['description'];
@@ -482,9 +476,10 @@ class EternaPuzzleModel {
     else return false;
   }
 
+  // MY CODE DOES NOT QUERY CLOUD LAB PUZZLES, DO I NEED TO ADD THE NEW FIELDS TO THE CLOUD LAB?
   function post_cloud_lab_puzzle($args,$uid,$user_model) {
     
-    /**  
+    /*  
     if (!$user_model) {
       eterna_utils_log_error("Cannot find user model - please contact admin");
       return NULL;
@@ -506,7 +501,7 @@ class EternaPuzzleModel {
       eterna_utils_log_error("You have already submitted 3 designs within past 24 hours");
       return NULL;
     }
-    **/
+    */
 
     
     $secstruct = $args['secstruct'];
@@ -549,6 +544,11 @@ class EternaPuzzleModel {
     $node->field_puzzle_locks[0]['value'] = $args['locks']."oooooooxxxxooooooox";
     $node->field_begin_seq[0]['value'] = $args['sequence']."AAAAAAAUUCGAAAAAAAA";
     $node->field_puzzle_objective[0]['value'] = $args['objectives'];
+
+    // IS THIS NECESSARY - RATING, TESTED, NUMVOTES
+    $node->field_puzzle_rating[0]['value'] = 1200; // starting rating
+    $node->field_puzzle_tested[0]['value'] = ""; // has been tested by nobody
+    $node->field_puzzle_numvotes[0]['value'] = 0; // has 0 votes 
     
     $node->field_use_tails[0]['value'] = 1;
     $node->field_puzzle_last_synthesis[0]['value'] = 0;
@@ -575,7 +575,7 @@ class EternaPuzzleModel {
 }
 
 
-/**
+/*
 function eterna_puzzle_get_puzzles($args) {
 
 	$query = "";
@@ -675,7 +675,7 @@ function eterna_puzzle_update_cleared($nid) {
 
 
 
-**/
+*/
 
 
 
