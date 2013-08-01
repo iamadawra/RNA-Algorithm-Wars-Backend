@@ -174,10 +174,9 @@ class EternaAlgorithmsModel{
 	    return db_result(db_query($query));  
 	}
 
-	function set_default_rating($defaultRating, $aid) {
-		$node = node_load($aid);
-    	$node->field_algorithm_rating[0]['value'] = $defaultRating;
-    	node_save($node);
+	function set_rating($rating, $aid) {
+		$query = "UPDATE content_type_algorithm_wars_algorithms SET content_type_algorithm_wars_algorithms.field_algorithm_rating_value=$rating WHERE content_type_algorithm_wars_algorithms.nid=$aid";
+		return db_result(db_query($query));
 	}
 
 	//Set all algorithm ratings to default
@@ -185,7 +184,7 @@ class EternaAlgorithmsModel{
 		$algorithms = get_all_algorithms();
 		$len = count($algorithms);
 		for($i = 0; $i < $len; $i++) {
-			set_default_rating($defaultRating, $algorithms[$i]["id"]);
+			set_rating($defaultRating, $algorithms[$i]["id"]);
 		}
 	}
 
@@ -209,7 +208,6 @@ class EternaAlgorithmsModel{
 		$expectedAlgorithmScore = (1/(1+pow(10,($currentPuzzleRating-$currentAlgorithmRating)/400)));
 		$newAlgorithmRating = $currentAlgorithmRating + $K($algorithmScore - $expectedAlgorithmScore);
 
-		$node = node_load($aid);
-    	$node->field_algorithm_rating[0]['value'] = $newAlgorithmRating;
+		return set_rating($newAlgorithmRating, $aid);
 	}
 }
