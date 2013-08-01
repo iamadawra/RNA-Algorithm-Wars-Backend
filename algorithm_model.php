@@ -126,11 +126,8 @@ class EternaAlgorithmsModel{
 
 	//Update a previous algorithm with a given ID
 	function modify_algorithm($id, $source) {
-		$node = node_load($aid);
-		// $tmp = $node->field_algorithm_code[0]['value'];
-    	$node->field_algorithm_code[0]['value'] = $source;
-    	node_save($node);
-    	// return $tmp; // just in case
+		$query = "UPDATE content_type_algorithm_wars_algorithms SET content_type_algorithm_wars_algorithms.field_algorithm_code_value=$source WHERE content_type_algorithm_wars_algorithms.nid=$id";
+		return db_result(db_query($query));
 	}
 
 	//Add a vote for a particular algorithm by a given user
