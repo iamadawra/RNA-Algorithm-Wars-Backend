@@ -212,5 +212,7 @@ class EternaAlgorithmsModel{
 		$expectedAlgorithmScore = (1/(1+pow(10,($currentPuzzleRating-$currentAlgorithmRating)/400)));
 		$newAlgorithmRating = $currentAlgorithmRating + $K($algorithmScore - $expectedAlgorithmScore);
 
+		$node = node_load($aid);
+    	$node->field_algorithm_rating[0]['value'] = $newAlgorithmRating;
 	}
 }
