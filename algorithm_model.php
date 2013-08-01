@@ -121,7 +121,9 @@ class EternaAlgorithmsModel{
 
 	//Deletes and algorithm from the database
 	function delete_algorithm($aid){
-		node_delete(node_load($aid));
+		// DO NOT DELETE, JEE SAYS TO JUST MARK THE STATUS AS "0"
+		// THIS MEANS CHANGE ALL THE QUERIES TO ONLY RETURN ALGORITHMS WHOSE
+		// STATUSES ARE NOT 0
 	}
 
 	//Update a previous algorithm with a given ID
