@@ -62,8 +62,27 @@ class EternaPuzzleModel {
   }
 
   //Update Puzzle rating
-  function update_puzzle_rating($id){
+  //Params need to be double checked in the controller
+  //Possible causes of bugs are getter methods and parameters being passed.
+  //Double check while testing.
+  function update_puzzle_rating($aid, $pid, $algorithmScore, $puzzleScore){
     // Implementation of the ELO Rating
+
+    if(!$algorithm_model) {
+      eterna_utils_log_error("Cannot find Algorithm model - please contact admin");
+          return NULL;
+    }
+
+    $K = 32;
+
+    $currentAlgorithmRating = $algorithm_model->get_algorithm_rating($aid);
+    $currentPuzzleRating = $puzzle_model->get_puzzle_rating($pid);
+
+    $expectedPuzzleScore = (1/(1+pow(10,($currentAlgorithmRating-$currentPuzzleRating)/400)));
+    $newPuzzleRating = $currentAlgorithmRating + $K($algorithmScore - $expectedPuzzleScore);
+
+    $node = node_load($pid);
+    $node->field_puzzle_rating[0]['value'] = $newPuzzleRating;
   }
 
   function get_easy_puzzles() {
