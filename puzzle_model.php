@@ -87,9 +87,9 @@ class EternaPuzzleModel {
     $currentPuzzleRating = $puzzle_model->get_puzzle_rating($pid);
 
     $expectedPuzzleScore = (1/(1+pow(10,($currentAlgorithmRating-$currentPuzzleRating)/400)));
-    $newPuzzleRating = $currentAlgorithmRating + $K($algorithmScore - $expectedPuzzleScore);
+    $newPuzzleRating = $currentAlgorithmRating + ($K * ($algorithmScore - $expectedPuzzleScore) );
 
-    $query = "UPDATE content_type_puzzle SET content_type_puzzle.field_puzzle_rating_value=$newPuzzleRating WHERE content_type_puzzle.nid=$aid";
+    $query = "UPDATE content_type_puzzle SET content_type_puzzle.field_puzzle_rating_value=$newPuzzleRating WHERE content_type_puzzle.nid=$pid";
     return db_result(db_query($query));
   }
 

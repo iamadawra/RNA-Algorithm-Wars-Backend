@@ -206,7 +206,7 @@ class EternaAlgorithmsModel{
 		$currentPuzzleRating = $puzzle_model->get_puzzle_rating($pid);
 
 		$expectedAlgorithmScore = (1/(1+pow(10,($currentPuzzleRating-$currentAlgorithmRating)/400)));
-		$newAlgorithmRating = $currentAlgorithmRating + $K($algorithmScore - $expectedAlgorithmScore);
+		$newAlgorithmRating = $currentAlgorithmRating + ($K * ($algorithmScore - $expectedAlgorithmScore));
 
 		return set_rating($newAlgorithmRating, $aid);
 	}
