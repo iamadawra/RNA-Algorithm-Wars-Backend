@@ -124,34 +124,54 @@ class EternaPuzzleModel {
     return get_rated_puzzles(2000, -1);
   }
 
-  function addPuzzleVote($uid, $pid) {
+  function addPuzzleVote($uid, $pid, $user_model) {
+
+    if(!$user_model) {
+        eterna_utils_log_error("Cannot find user model - please contact admin");
+        return NULL;
+    }
+
   	// check if vote already exists
   	// check if user has maxed out his num votes
 
   	// votes is like "", "3,", "3,5", etc...
     $votes = $user_model->get_puzzlevotes($uid);
 
-    if(substr_count($votes, ',') >= 5) {
-    	// You can only vote for 5 puzzles
-    	eterna_utils_log_error("You can only vote for a maximum of 5 puzzles!");
-    	return false;
+    if(!is_null($votes)) {
+
+
+      if(substr_count($votes, ',') >= 5) {
+      	// You can only vote for 5 puzzles
+      	eterna_utils_log_error("You can only vote for a maximum of 5 puzzles!");
+      	return false;
+      }
+
+      if(strpos($votes, $pid) !== false) {
+      	// found already
+      	eterna_utils_log_error("You have already voted for this puzzle.");
+      	return false;
+      }
+
+      $user_model->set_puzzlevotes($uid, $votes . $pid . ',');
+    } else {
+      $user_model->set_puzzlevotes($uid, $pid . ',');
     }
 
-    if(strpos($votes, $pid) !== false) {
-    	// found already
-    	eterna_utils_log_error("You have already voted for this puzzle.");
-    	return false;
-    }
-
-    $user_model->set_puzzlevotes($uid, $votes . $pid . ',');
     $query = "UPDATE content_type_puzzle SET content_type_puzzle.field_puzzle_numvotes_value=content_type_puzzle.field_puzzle_numvotes_value+1 WHERE content_type_puzzle.nid=$pid";
     return db_result(db_query($query));  
   }
 
-  function removePuzzleVote($uid, $pid) {
+  function removePuzzleVote($uid, $pid, $user_model) {
+
+    if(!$user_model) {
+        eterna_utils_log_error("Cannot find user model - please contact admin");
+        return NULL;
+    }
+
   	// check if vote exists
   	$votes = $user_model->get_puzzlevotes($uid);
-  	if(strpos($votes, $pid) === false) {
+
+  	if(is_null($votes) || strpos($votes, $pid) === false) {
   		eterna_utils_log_error("You have not voted for this puzzle yet.");
   		return false;
   	}

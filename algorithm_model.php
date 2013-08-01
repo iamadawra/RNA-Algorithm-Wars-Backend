@@ -131,32 +131,49 @@ class EternaAlgorithmsModel{
 	}
 
 	//Add a vote for a particular algorithm by a given user
-	function add_algorithm_vote($uid, $aid){
+	function add_algorithm_vote($uid, $aid, $user_model){
+
+		if(!$user_model) {
+			eterna_utils_log_error("Cannot find user model - please contact admin");
+      		return false;
+		}
 		// check if vote already exists
 		// check if user has maxed out his num votes
 		$votes = $user_model->get_algorithmvotes($uid);
 
-		if(substr_count($votes, ',') >= 5) {
-			// only 5 algorithms
-			eterna_utils_log_error("You can only vote for a maximum of 5 algorithms!");
-			return false;
+		if(!is_null($votes)) {
+
+			if(substr_count($votes, ',') >= 5) {
+				// only 5 algorithms
+				eterna_utils_log_error("You can only vote for a maximum of 5 algorithms!");
+				return false;
+			}
+
+			if(strpos($votes, $aid) !== false) {
+				// found already
+				eterna_utils_log_error("You have already voted for this algorithm.");
+				return false;
+			}
+
+			$user_model->set_algorithmvotes($uid, $votes . $aid . ',');
+		} else {
+			$user_model->set_algorithmvotes($uid, $aid . ',');
 		}
 
-		if(strpos($votes, $aid) !== false) {
-			// found already
-			eterna_utils_log_error("You have already voted for this algorithm.");
-			return false;
-		}
-
-		$user_model->set_algorithmvotes($uid, $votes . $aid . ',');
 		$query = "UPDATE content_type_algorithm_wars_algorithms SET content_type_algorithm_wars_algorithms.field_algorithm_votes_value=content_type_algorithm_wars_algorithms.field_algorithm_votes_value+1 WHERE content_type_algorithm_wars_algorithms.nid=$aid";
 		return db_result(db_query($query));
 	}
 
 	//Remove a vote for a particular algorithm by a given user
-	function remove_algorithm_vote($uid, $aid){
+	function remove_algorithm_vote($uid, $aid, $user_model){
+
+		if(!$user_model) {
+			eterna_utils_log_error("Cannot find user model - please contact admin");
+      		return NULL;
+		}
+
 		$votes = $user_model->get_algorithmvotes($uid);
-		if(strpos($votes, $pid) === false) {
+		if(is_null($votes) || strpos($votes, $pid) === false) {
 			eterna_utils_log_error("You have not voted for this algorithm yet.");
 			return false;
 		}
