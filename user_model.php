@@ -1,7 +1,5 @@
 <?php
 
-// we did not introduce node_load in user_model, ignore all node_loads here
-
 class EternaUserModel {
   
   private $current_incognito_id_ = NULL;
