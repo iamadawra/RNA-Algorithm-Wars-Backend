@@ -61,6 +61,14 @@ class EternaPuzzleModel {
     return $puzzles;
   }
 
+  //Gets the rating of a particular puzzle
+  //Double check this method. Exact duplicate of algorithm model.
+  function get_puzzle_rating($pid){
+    $algorithm = get_puzzle($pid);
+    return $algorithm["rating"];
+  }
+
+
   //Update Puzzle rating
   //Params need to be double checked in the controller
   //Possible causes of bugs are getter methods and parameters being passed.
