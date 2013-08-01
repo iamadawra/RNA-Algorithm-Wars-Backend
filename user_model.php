@@ -206,34 +206,31 @@ class EternaUserModel {
   }  
 
   function get_puzzlevotes($uid) {
-    $query = "SELECT u.uid, u.puzvotes AS puzvotes FROM users u LEFT JOIN userpoints up ON u.uid=up.uid LEFT JOIN fbconnect_users f ON f.uid=u.uid LEFT JOIN users_roles ur ON ur.uid=u.uid WHERE u.uid=$uid";
-    $result = db_query($query);
-    $user = array();
-    while($res = db_fetch_array($result)) {
-      array_push($user, $res);
-    }
 
-    return $user["puzvotes"];
+    $query = "SELECT pv.value, pf.title FROM profile_values pv LEFT JOIN profile_fields pf ON pf.fid=pv.fid WHERE pv.uid=$uid AND pf.title='Puzzle Votes'";
+    $result = (db_query($query));
+    $userinfo = array();
+    if($res = db_fetch_array($result))
+    	return $res['value'];
+    return null;
   }
 
   function get_algorithmvotes($uid) {
-    $query = "SELECT u.uid, u.algorithmvotes AS algorithmvotes FROM users u LEFT JOIN userpoints up ON u.uid=up.uid LEFT JOIN fbconnect_users f ON f.uid=u.uid LEFT JOIN users_roles ur ON ur.uid=u.uid WHERE u.uid=$uid";
+    $query = "SELECT pv.value, pf.title FROM profile_values pv LEFT JOIN profile_fields pf ON pf.fid=pv.fid WHERE pv.uid=$uid AND pf.title='Algorithm Votes'";
     $result = db_query($query);
     $user = array();
-    while($res = db_fetch_array($result)) {
-      array_push($user, $res);
-    }
-
-    return $user["algorithmvotes"];    
+    if($res = db_fetch_array($result))
+      return $res['value'];
+    return null;    
   }
 
   function set_puzzlevotes($uid, $newvotes) {
-    $query = "UPDATE users SET users.puzvotes=$newvotes WHERE users.uid=$uid";
+  	$query = "UPDATE profile_values LEFT JOIN profile_fields ON profile_fields.fid = profile_values.fid SET profile_values.value=$newvotes WHERE profile_values.uid=$uid AND profile_fields.title='Puzzle Votes'";
     return db_result(db_query($query));
   }
 
   function set_algorithmvotes($uid, $newvotes) {
-    $query = "UPDATE users SET users.algorithmvotes=$newvotes WHERE users.uid=$uid";
+  	$query = "UPDATE profile_values LEFT JOIN profile_fields ON profile_fields.fid = profile_values.fid SET profile_values.value=$newvotes WHERE profile_values.uid=$uid AND profile_fields.title='Algorithm Votes'";
     return db_result(db_query($query));
   }
 

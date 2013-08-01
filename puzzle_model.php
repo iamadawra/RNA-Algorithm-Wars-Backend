@@ -61,6 +61,11 @@ class EternaPuzzleModel {
     return $puzzles;
   }
 
+  //Update Puzzle rating
+  function update_puzzle_rating($id){
+    // Implementation of the ELO Rating
+  }
+
   function get_easy_puzzles() {
     return get_rated_puzzles(1200, 1400);
   }
