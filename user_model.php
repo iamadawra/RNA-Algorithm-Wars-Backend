@@ -45,6 +45,16 @@ class EternaUserModel {
     }
     return $userres;
   }
+
+  // sets all the new fields to their correct default values for all existing users
+  function reset_all_users() {
+    // new fields:
+    // Puzzle Votes, profile_puzzle_votes, Text
+    // Algorithm Votes, profile_algorithm_votes, Text
+    $query = "UPDATE profile_values LEFT JOIN profile_fields ON profile_fields.fid = profile_values.fid SET profile_values.value='' WHERE profile_fields.title='Puzzle Votes'";
+    $query2 = "UPDATE profile_values LEFT JOIN profile_fields ON profile_fields.fid = profile_values.fid SET profile_values.value='' WHERE profile_fields.title='Algorithm Votes'";
+    return db_result(db_query($query)) && db_result(db_query($query2));
+  }
   
   function find_users_ids($names){
     $names_arr = Array();      

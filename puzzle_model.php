@@ -68,6 +68,17 @@ class EternaPuzzleModel {
     return $algorithm["rating"];
   }
 
+  // sets all the new fields to their correct default values for all existing puzzles
+  function reset_all_puzzles() {
+    // new fields:
+    // Tested field_puzzle_tested Text
+    // Rating field_puzzle_rating Integer
+    // Number of Votes field_puzzle_numvotes Integer
+    // Times Tested field_puzzle_numtested Integer
+    $query = "UPDATE content_type_puzzle SET content_type_puzzle.field_puzzle_tested_value='', content_type_puzzle.field_puzzle_rating_value=1200, content_type_puzzle.field_puzzle_numvotes_value=0, content_type_puzzle.field_puzzle_numtested_value = 0";
+    return db_result(db_query($query));
+  }
+
 
   //Update Puzzle rating
   //Params need to be double checked in the controller
