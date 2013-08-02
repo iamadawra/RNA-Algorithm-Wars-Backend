@@ -43,7 +43,7 @@ class EternaAlgorithmsModel{
 
 	//Gets the top numofAlgorithms algorithms based on the number of votes
 	function get_top_voted_algorithms($numofAlgorithms){
-		$query = "SELECT n.title, n.created, algorithm.field_algorithm_rating_value AS rating, algorithm.field_algorithm_code_value AS code, algorithm.field_algorithm_votes_value AS numvotes, algorithm.field_algorithm_description_value AS description, algorithm.field_algorithm_times_tested_value AS timestested, algorithm.field_algorithm_tested_puzzles_value AS tested, u.uid AS uid, u.name AS username, u.picture AS userpicture, n.nid AS id, nr.body FROM content_type_algorithm_wars_algorithms algorithm LEFT JOIN node n ON algorithm.nid=n.nid LEFT JOIN node_revisions nr ON n.vid=nr.vid LEFT JOIN users u ON u.uid=n.uid WHERE n.nid=$nid AND n.status <> 0";
+		$query = "SELECT n.title, n.created, algorithm.field_algorithm_rating_value AS rating, algorithm.field_algorithm_code_value AS code, algorithm.field_algorithm_votes_value AS numvotes, algorithm.field_algorithm_description_value AS description, algorithm.field_algorithm_times_tested_value AS timestested, algorithm.field_algorithm_tested_puzzles_value AS tested, u.uid AS uid, u.name AS username, u.picture AS userpicture, n.nid AS id, nr.body FROM content_type_algorithm_wars_algorithms algorithm LEFT JOIN node n ON algorithm.nid=n.nid LEFT JOIN node_revisions nr ON n.vid=nr.vid LEFT JOIN users u ON u.uid=n.uid WHERE n.status <> 0";
 		$order = "ORDER BY numvotes DESC";
 		$limit = "LIMIT $numofAlgorithms";
 		$full_query = "$query $order $limit";
@@ -197,6 +197,7 @@ class EternaAlgorithmsModel{
 	}
 
 	//Set all algorithm ratings to default
+	// OPTIMIZATION REQUIRED!
 	function set_default_ratings_for_all($defaultRating){
 		$algorithms = get_all_algorithms();
 		$len = count($algorithms);
