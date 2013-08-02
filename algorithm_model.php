@@ -197,13 +197,11 @@ class EternaAlgorithmsModel{
 	}
 
 	//Set all algorithm ratings to default
-	// OPTIMIZATION REQUIRED!
 	function set_default_ratings_for_all($defaultRating){
 		$algorithms = get_all_algorithms();
 		$len = count($algorithms);
-		for($i = 0; $i < $len; $i++) {
-			set_rating($defaultRating, $algorithms[$i]["id"]);
-		}
+		$query  = "UPDATE content_type_algorithm_wars_algorithms SET content_type_algorithm_wars_algorithms.field_algorithm_rating_value=$defaultRating";
+		return db_result(db_query($query));
 	}
 
 	//Update Algorithm rating. 
