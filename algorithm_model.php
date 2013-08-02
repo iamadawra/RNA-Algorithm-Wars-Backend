@@ -2,6 +2,7 @@
 
 class EternaAlgorithmsModel{
 
+	var $current_queue = array();
 	##################################
 	##  Getter Methods
 	##################################
@@ -76,6 +77,18 @@ class EternaAlgorithmsModel{
 			if($algorithms[$i]["id"] == $id) return ($i + 1);
 		}
 		return null;
+	}
+
+	//Getter Method to get the complete current queue
+	function get_current_algorithm_queue(){
+		return $current_queue;
+	}
+
+	//Get next algorithm in queue
+	function get_next_algorithm_in_queue(){
+		$next_algorithm_id = array_pop($current_queue);
+		//Returns algorithm id right now, must be changed if need be
+		return $next_algorithm_id
 	}
 
 	##################################
@@ -225,5 +238,13 @@ class EternaAlgorithmsModel{
 		$newAlgorithmRating = $currentAlgorithmRating + ($K * ($algorithmScore - $expectedAlgorithmScore));
 
 		return set_rating($newAlgorithmRating, $aid);
+	}
+
+	//Add algorithms to queue based on which algorithm has been tested the
+	//lowest getting first priority to get into the queue
+	// Bug Pitfall: Can't pop the first element if the puzzle has been tested on it
+	// Awaiting suggestions..
+	function add_algorithms_to_queue(){
+		//Implementation
 	}
 }
