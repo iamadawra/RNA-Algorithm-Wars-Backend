@@ -86,7 +86,7 @@ class EternaAlgorithmsModel{
 
 	//Get next algorithm in queue
 	function get_next_algorithm_in_queue(){
-		$next_algorithm_id = array_pop($current_queue);
+		$next_algorithm_id = array_shift($current_queue);
 		//Returns algorithm id right now, must be changed if need be
 		return $next_algorithm_id
 	}
@@ -244,7 +244,9 @@ class EternaAlgorithmsModel{
 	//lowest getting first priority to get into the queue
 	// Bug Pitfall: Can't pop the first element if the puzzle has been tested on it
 	// Awaiting suggestions..
-	function add_algorithms_to_queue(){
-		//Implementation
+	function add_algorithm_to_queue($id){
+		$next_algorithm_id = array_push($current_queue, $id);
+		//Returns algorithm id right now, must be changed if need be
+		return $next_algorithm_id
 	}
 }
