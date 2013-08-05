@@ -2,13 +2,13 @@
 
 class EternaAlgorithmsModel{
 
-	var $current_queue = array();
+	protected $current_queue = array();
 	##################################
 	##  Getter Methods
 	##################################
 
 	//returns algorithm with a given id
-	function get_algorithm($nid){
+	public function get_algorithm($nid){
 		$query = "SELECT n.title, n.created, algorithm.field_algorithm_rating_value AS rating, algorithm.field_algorithm_code_value AS code, algorithm.field_algorithm_votes_value AS numvotes, algorithm.field_algorithm_description_value AS description, algorithm.field_algorithm_times_tested_value AS timestested, algorithm.field_algorithm_tested_puzzles_value AS tested, u.uid AS uid, u.name AS username, u.picture AS userpicture, n.nid AS id, nr.body FROM content_type_algorithm_wars_algorithms algorithm LEFT JOIN node n ON algorithm.nid=n.nid LEFT JOIN node_revisions nr ON n.vid=nr.vid LEFT JOIN users u ON u.uid=n.uid WHERE n.nid=$nid AND n.status <> 0";
 		$result = db_query($query);
 		if($res = db_fetch_array($result)) {
@@ -19,7 +19,7 @@ class EternaAlgorithmsModel{
 	}
 
 	//Gets algorithms with ratings between ratingA and ratingB
-	function get_algorithms_between($ratingA, $ratingB){
+	public function get_algorithms_between($ratingA, $ratingB){
 		$query = "SELECT n.title, n.created, algorithm.field_algorithm_rating_value AS rating, algorithm.field_algorithm_code_value AS code, algorithm.field_algorithm_votes_value AS numvotes, algorithm.field_algorithm_description_value AS description, algorithm.field_algorithm_times_tested_value AS timestested, algorithm.field_algorithm_tested_puzzles_value AS tested, u.uid AS uid, u.name AS username, u.picture AS userpicture, n.nid AS id, nr.body FROM content_type_algorithm_wars_algorithms algorithm LEFT JOIN node n ON algorithm.nid=n.nid LEFT JOIN node_revisions nr ON n.vid=nr.vid LEFT JOIN users u ON u.uid=n.uid WHERE n.nid=$nid AND n.status <> 0";
 		$where = "WHERE rating >= $ratingA AND rating <= $ratingB";
 		$result = db_query("$query $where");
@@ -31,7 +31,7 @@ class EternaAlgorithmsModel{
 	}
 
 	//Gets all the algorithms by a particular rating
-	function get_algorithms_by_rating($rating){
+	public function get_algorithms_by_rating($rating){
 		$query = "SELECT n.title, n.created, algorithm.field_algorithm_rating_value AS rating, algorithm.field_algorithm_code_value AS code, algorithm.field_algorithm_votes_value AS numvotes, algorithm.field_algorithm_description_value AS description, algorithm.field_algorithm_times_tested_value AS timestested, algorithm.field_algorithm_tested_puzzles_value AS tested, u.uid AS uid, u.name AS username, u.picture AS userpicture, n.nid AS id, nr.body FROM content_type_algorithm_wars_algorithms algorithm LEFT JOIN node n ON algorithm.nid=n.nid LEFT JOIN node_revisions nr ON n.vid=nr.vid LEFT JOIN users u ON u.uid=n.uid WHERE n.nid=$nid AND n.status <> 0";
 		$where = "WHERE rating = $rating";
 		$result = db_query("$query $where");
@@ -43,7 +43,7 @@ class EternaAlgorithmsModel{
 	}
 
 	//Gets the top numofAlgorithms algorithms based on the number of votes
-	function get_top_voted_algorithms($numofAlgorithms){
+	public function get_top_voted_algorithms($numofAlgorithms){
 		$query = "SELECT n.title, n.created, algorithm.field_algorithm_rating_value AS rating, algorithm.field_algorithm_code_value AS code, algorithm.field_algorithm_votes_value AS numvotes, algorithm.field_algorithm_description_value AS description, algorithm.field_algorithm_times_tested_value AS timestested, algorithm.field_algorithm_tested_puzzles_value AS tested, u.uid AS uid, u.name AS username, u.picture AS userpicture, n.nid AS id, nr.body FROM content_type_algorithm_wars_algorithms algorithm LEFT JOIN node n ON algorithm.nid=n.nid LEFT JOIN node_revisions nr ON n.vid=nr.vid LEFT JOIN users u ON u.uid=n.uid WHERE n.status <> 0";
 		$order = "ORDER BY numvotes DESC";
 		$limit = "LIMIT $numofAlgorithms";
@@ -57,20 +57,20 @@ class EternaAlgorithmsModel{
 	}
 
 	//Gets the rating of a particular algorithm
-	function get_algorithm_rating($id){
+	public function get_algorithm_rating($id){
 		$algorithm = get_algorithm($id);
 		return $algorithm["rating"];
 	}
 
 	// get all algorithms
-	function get_all_algorithms() {
+	public function get_all_algorithms() {
 		$numrows = db_result(db_query("SELECT COUNT(*) FROM content_type_algorithm_wars_algorithms"));
 		$algorithms = get_top_voted_algorithms($numrows);
 		return $algorithms;
 	}
 
 	//Get Algorithm ranking
-	function get_algorithm_ranking($id){
+	public function get_algorithm_ranking($id){
 		$algorithms = get_all_algorithms();
 		$len = count($algorithms);
 		for($i = 0; $i < $len; $i++) {
@@ -80,12 +80,12 @@ class EternaAlgorithmsModel{
 	}
 
 	//Getter Method to get the complete current queue
-	function get_current_algorithm_queue(){
+	public function get_current_algorithm_queue(){
 		return $current_queue;
 	}
 
 	//Get next algorithm in queue
-	function get_next_algorithm_in_queue(){
+	public function get_next_algorithm_in_queue(){
 		$next_algorithm_id = array_shift($current_queue);
 		//Returns algorithm id right now, must be changed if need be
 		return $next_algorithm_id
@@ -96,7 +96,7 @@ class EternaAlgorithmsModel{
 	##################################
 
 	//Adds an algorithm to the database
-	function add_algorithm($args, $uid, $user_model){
+	public function add_algorithm($args, $uid, $user_model){
 		
 		if(!$user_model) {
 			eterna_utils_log_error("Cannot find user model - please contact admin");
@@ -132,19 +132,19 @@ class EternaAlgorithmsModel{
 	}
 
 	//Deletes and algorithm from the database
-	function delete_algorithm($aid){
+	public function delete_algorithm($aid){
 		$query = "UPDATE node SET node.status=0 WHERE node.nid=$aid";
 		return db_result(db_query($query));
 	}
 
 	//Update a previous algorithm with a given ID
-	function modify_algorithm($id, $source) {
+	public function modify_algorithm($id, $source) {
 		$query = "UPDATE content_type_algorithm_wars_algorithms SET content_type_algorithm_wars_algorithms.field_algorithm_code_value=$source WHERE content_type_algorithm_wars_algorithms.nid=$id";
 		return db_result(db_query($query));
 	}
 
 	//Add a vote for a particular algorithm by a given user
-	function add_algorithm_vote($uid, $aid, $user_model){
+	public function add_algorithm_vote($uid, $aid, $user_model){
 
 		if(!$user_model) {
 			eterna_utils_log_error("Cannot find user model - please contact admin");
@@ -178,7 +178,7 @@ class EternaAlgorithmsModel{
 	}
 
 	//Remove a vote for a particular algorithm by a given user
-	function remove_algorithm_vote($uid, $aid, $user_model){
+	public function remove_algorithm_vote($uid, $aid, $user_model){
 
 		if(!$user_model) {
 			eterna_utils_log_error("Cannot find user model - please contact admin");
@@ -204,13 +204,13 @@ class EternaAlgorithmsModel{
 	    return db_result(db_query($query));  
 	}
 
-	function set_rating($rating, $aid) {
+	public function set_rating($rating, $aid) {
 		$query = "UPDATE content_type_algorithm_wars_algorithms SET content_type_algorithm_wars_algorithms.field_algorithm_rating_value=$rating WHERE content_type_algorithm_wars_algorithms.nid=$aid";
 		return db_result(db_query($query));
 	}
 
 	//Set all algorithm ratings to default
-	function set_default_ratings_for_all($defaultRating){
+	public function set_default_ratings_for_all($defaultRating){
 		$algorithms = get_all_algorithms();
 		$len = count($algorithms);
 		$query  = "UPDATE content_type_algorithm_wars_algorithms SET content_type_algorithm_wars_algorithms.field_algorithm_rating_value=$defaultRating";
@@ -221,7 +221,7 @@ class EternaAlgorithmsModel{
 	//Params need to be double checked in the controller
 	//Possible causes of bugs are getter methods and parameters being passed.
 	//Double check while testing.
-	function update_algorithm_rating($aid,$pid,$algorithmScore, $puzzleScore){
+	public function update_algorithm_rating($aid,$pid,$algorithmScore, $puzzleScore){
 		// Implementation of the ELO Rating
 
 		if(!$puzzle_model) {
@@ -244,9 +244,9 @@ class EternaAlgorithmsModel{
 	//lowest getting first priority to get into the queue
 	// Bug Pitfall: Can't pop the first element if the puzzle has been tested on it
 	// Awaiting suggestions..
-	function add_algorithm_to_queue($id){
+	public function add_algorithms_to_queue($id){
 		$next_algorithm_id = array_push($current_queue, $id);
 		//Returns algorithm id right now, must be changed if need be
-		return $next_algorithm_id
+		return $next_algorithm_id;
 	}
 }
