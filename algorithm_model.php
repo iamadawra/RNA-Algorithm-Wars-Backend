@@ -249,4 +249,7 @@ class EternaAlgorithmsModel{
 		//Returns algorithm id right now, must be changed if need be
 		return $next_algorithm_id;
 	}
+
+	//Another method needed to pick out the lowest 10 tested algorithms and
+	// feed them into the current queue
 }
