@@ -34,24 +34,27 @@ class EternaGETController extends EternaController {
       			$data['ret'] = $algorithm_model->get_algorithms_between($ratingA, $ratingB);
       		} else if($func == "byrating") {
       			$rating = $params["rating"];
+      			$data['ret'] = $algorithm_model->get_algorithms_by_rating($rating);
       		} else if($func == "top") {
-      			$rating = $params["num"];
+      			$num = $params["num"];
+      			$data['ret'] = $algorithm_model->get_top_voted_algorithms($num);
       		} else if($func == "rating") {
-      			$rating = $params["id"];
+      			$id = $params["id"];
+      			$data['ret'] = $algorithm_model->get_algorithm_rating($id);
       		} else if($func == "all") {
-
+      			$data['ret'] = $algorithm_model->get_all_algorithms();
       		} else if($func == "ranking") {
-      			$rating = $params["id"];
+      			$id = $params["id"];
+      			$data['ret'] = $algorithm_model->get_algorithm_ranking($id);
       		} else if($func == "queue") {
-
+      			$data['ret'] = $algorithm_model->get_current_algorithm_queue();
       		} else if($func == "next") {
-
+      			$data['ret'] = $algorithm_model->get_next_algorithm_in_queue();
       		}
 
 
 
 
-			$nid = $parmas["bla"];
 		} else if($type == "awpuzzles") {
 
 		}
