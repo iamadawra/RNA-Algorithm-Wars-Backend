@@ -23,7 +23,8 @@
 		$myscripts = $scripts['data']['algorithmlist'];
 		$mypuzzles = $puzzles['data']['puzzlelist'];
 
-		$url = "linktojustinserver.com";
+		// http server is located on port 3000 in www/start.js of eval server
+		$url = "ec2-54-242-61-159.compute-1.amazonaws.com:3000";
 		$vars = 'scripts=' . $myscripts . '&puzzles=' . $mypuzzles;
 
 		$ch = curl_init($url);
@@ -33,7 +34,9 @@
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
-		return curl_exec($ch);
+		$ret = curl_exec($ch);
+		curl_close($ch);
+		return $ret;
 	}
 
 	function main() {
