@@ -8,47 +8,52 @@
 
 var http = require('http');
 
-function getScriptsAndPuzzles() {
+function getData(queryoptions) {
+	try {
+		http.get(options, function(res) {
+			var str = '';
+			res.on('data', function(chunk) {
+				str += chunk;
+			});
+			res.on('end', function() {
+				return JSON.parse(str);
+			});
+		});
+	} catch (e) {
+		console.log(e.toString());
+		return getData(queryoptions);
+	}
+}
+
+function getScripts() {
 	var queryoptions = {
 		host: 'http://vineet.eternadev.org',
 		path: '/get/?type=SOMETHING&arg1name=SOMETHINGELSE'
 	}
 
-	try {
-		http.get(options, function(res) {
-			var str = '';
-			res.on('data', function(chunk) {
-				str += chunk;
-			});
-			res.on('end', function() {
-				return JSON.parse(str);
-			})
-		})
-	} catch (e) {
-		console.log(e.toString());
-		return getScriptsAndPuzzles(); // if error, repeat
-	}
-
+	return getData(queryoptions);
 }
 
-function sendScriptsAndPuzzles(scripts, puzzles) {
+function getPuzzles() {
 	var queryoptions = {
-		host: 'justinserverlink?.com',
-		path : '/path/to/post/file'
+		host: 'http://vineet.eternadev.org',
+		path: '/get/?type=SOMETHING&arg1name=SOMETHINGELSE'
 	}
 
-	try {
-		http.get(options, function(res) {
-			var str = '';
-			res.on('data', function(chunk) {
-				str += chunk;
-			});
-			res.on('end', function() {
-				return JSON.parse(str);
-			})
-		})
-	} catch (e) {
-		console.log(e.toString());
-		sendScriptsAndPuzzles(); // if error, repeat
+	return getData(queryoptions);
+}
+
+function sendData(scripts, puzzles) {
+	var queryoptions = {
+		host: 'justinserverlink?.com',
+		path: '/path/to/post/file'
 	}
+
+	getData(queryoptions);
+}
+
+function main() {
+	var scripts = getScripts();
+	var puzzles = getPuzzles();
+	sendData(scripts, puzzles);
 }
