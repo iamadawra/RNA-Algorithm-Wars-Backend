@@ -29,7 +29,7 @@ class EternaGETController extends EternaController {
 				$puzzle_model->resetQueue(100, -1); // 100 matches?
 				// get the queue of puzzles and reset the queue
 			} else if($type == "awpuzzles") {
-				// put only new methods
+				// DONE
 				$func = $params["func"];
 				if(!$func) {
 					$nid = $params["nid"];

@@ -20,12 +20,18 @@
 	}
 
 	function sendData($scripts, $puzzles) {
-		$myscripts = $scripts['data']['algorithmlist'];
-		$mypuzzles = $puzzles['data']['puzzlelist'];
+		$send = array();
+		for($i = 0; $i < count($scripts); $i++) {
+			$tmp = new stdClass();
+			$tmp->nid = $puzzles[$i];
+			$tmp->aid = $scripts[$i];
+			array_push($send, $tmp);
+		}
+		$send = json_encode($send);
 
 		// http server is located on port 3000 in www/start.js of eval server
 		$url = "ec2-54-242-61-159.compute-1.amazonaws.com:3000";
-		$vars = 'type=algorithmwars' .  '&scripts=' . $myscripts . '&puzzles=' . $mypuzzles;
+		$vars = '?type=algorithmwars' .  '&testsets=' . $send;
 
 		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_POST, 1);
