@@ -30,8 +30,8 @@
 		$send = json_encode($send);
 
 		// http server is located on port 3000 in www/start.js of eval server
-		$url = "ec2-54-242-61-159.compute-1.amazonaws.com:3000";
-		$vars = '?type=algorithmwars' .  '&testsets=' . $send;
+		$url = "ec2-54-242-61-159.compute-1.amazonaws.com:3000/algorithmwars/";
+		$vars = 'testsets=' . $send;
 
 		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_POST, 1);
