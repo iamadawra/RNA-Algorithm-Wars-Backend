@@ -25,7 +25,7 @@
 
 		// http server is located on port 3000 in www/start.js of eval server
 		$url = "ec2-54-242-61-159.compute-1.amazonaws.com:3000";
-		$vars = 'scripts=' . $myscripts . '&puzzles=' . $mypuzzles;
+		$vars = 'type=algorithmwars' .  'scripts=' . $myscripts . '&puzzles=' . $mypuzzles;
 
 		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_POST, 1);

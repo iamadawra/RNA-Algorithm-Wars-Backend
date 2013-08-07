@@ -17,48 +17,47 @@ class EternaGETController extends EternaController {
 		$type = $params['type'];
 		$data = array();
 
-		if($type == "awalgorithms") {
+			if($type == "awscript") {
+				// get the queue of algorithms
+			} else if($type == "awpuzzle") {
+				// get the queue of puzzles
+			} else if($type == "awpuzzles") {
+				// put all the get methods for puzzles
+			} else if($type == "awalgorithms") {
+				// put all the get methods for algorithms
+				$user_model = $this->get_model("EternaUserModel");
+				$algorithm_model = $this->get_model("EternaAlgorithmsModel");      
+				$puzzle_model = $this->get_model("EternaPuzzleModel");
 
-			$user_model = $this->get_model("EternaUserModel");
-      		$algorithm_model = $this->get_model("EternaAlgorithmsModel");      
-      		$puzzle_model = $this->get_model("EternaPuzzleModel");
+				$func = $params["func"];
 
-      		$func = $params["func"];
-
-      		if(!$func) {
-      			$nid = $params["nid"];
-      			$data['ret'] = $algorithm_model->get_algorithm($nid);
-      		} else if($func == "between") {
-      			$ratingA = $params["above"];
-      			$ratingB = $params["below"];
-      			$data['ret'] = $algorithm_model->get_algorithms_between($ratingA, $ratingB);
-      		} else if($func == "byrating") {
-      			$rating = $params["rating"];
-      			$data['ret'] = $algorithm_model->get_algorithms_by_rating($rating);
-      		} else if($func == "top") {
-      			$num = $params["num"];
-      			$data['ret'] = $algorithm_model->get_top_voted_algorithms($num);
-      		} else if($func == "rating") {
-      			$id = $params["id"];
-      			$data['ret'] = $algorithm_model->get_algorithm_rating($id);
-      		} else if($func == "all") {
-      			$data['ret'] = $algorithm_model->get_all_algorithms();
-      		} else if($func == "ranking") {
-      			$id = $params["id"];
-      			$data['ret'] = $algorithm_model->get_algorithm_ranking($id);
-      		} else if($func == "queue") {
-      			$data['ret'] = $algorithm_model->get_current_algorithm_queue();
-      		} else if($func == "next") {
-      			$data['ret'] = $algorithm_model->get_next_algorithm_in_queue();
-      		}
-
-
-
-
-		} else if($type == "awpuzzles") {
-
+				if(!$func) {
+					$nid = $params["nid"];
+					$data['ret'] = $algorithm_model->get_algorithm($nid);
+				} else if($func == "between") {
+					$ratingA = $params["above"];
+					$ratingB = $params["below"];
+					$data['ret'] = $algorithm_model->get_algorithms_between($ratingA, $ratingB);
+				} else if($func == "byrating") {
+					$rating = $params["rating"];
+					$data['ret'] = $algorithm_model->get_algorithms_by_rating($rating);
+				} else if($func == "top") {
+					$num = $params["num"];
+					$data['ret'] = $algorithm_model->get_top_voted_algorithms($num);
+				} else if($func == "rating") {
+					$id = $params["id"];
+					$data['ret'] = $algorithm_model->get_algorithm_rating($id);
+				} else if($func == "all") {
+					$data['ret'] = $algorithm_model->get_all_algorithms();
+				} else if($func == "ranking") {
+					$id = $params["id"];
+					$data['ret'] = $algorithm_model->get_algorithm_ranking($id);
+				} else if($func == "queue") {
+					$data['ret'] = $algorithm_model->get_current_algorithm_queue();
+				} else if($func == "next") {
+					$data['ret'] = $algorithm_model->get_next_algorithm_in_queue();
+				}
 		}
-
 	}
 }
 
