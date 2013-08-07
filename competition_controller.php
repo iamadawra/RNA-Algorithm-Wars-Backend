@@ -22,14 +22,34 @@ class EternaGETController extends EternaController {
 
 			if($type == "awscript") {
 				$data['ret'] = $algorithm_model->get_current_algorithm_queue();
-				$algorithm_model->resetQueue(100); // change later!@#@!
-				// get the queue of algorithms and reset the queue
+				$algorithm_model->resetQueue(100); // 100 matches?
+				// DONE
 			} else if($type == "awpuzzle") {
 				$data['ret'] = $puzzle_model->get_current_puzzle_queue();
-				$puzzle_model->resetQueue(100, -1); // change later@$!@#
+				$puzzle_model->resetQueue(100, -1); // 100 matches?
 				// get the queue of puzzles and reset the queue
 			} else if($type == "awpuzzles") {
-				// put all the get methods for puzzles
+				// put only new methods
+				$func = $params["func"];
+				if(!$func) {
+					$nid = $params["nid"];
+					$data['ret'] = $puzzle_model->get_puzzle($nid);
+				} else if($func == "next") {
+
+				} else if($func == "favored") {
+					$data['ret'] = $puzzle_model->get_favored_puzzles($params["num"]);
+				} else if($func == "rated") {
+					$data['ret'] = $puzzle_model->get_rated_puzzles($params["min"], $params["max"]);
+				} else if($func == "tested") {
+					$data['ret'] = $puzzle_model->get_least_tested_puzzles($params["num"], $params["constraints"]);
+				} else if($func == "rating") {
+					$data['ret'] = $puzzle_model->get_puzzle_rating($params["pid"]);
+				} else if($func == "type") {
+					if(method_exists($puzzle_model, "get_" . $params["level"] . "_puzzles"))
+						$data['ret'] = call_user_func( array($puzzle_model, "get_" . $params["level"] . "_puzzles"));
+					else
+						$data['ret'] = "Function not found in line 51 of competition_controller :(";				
+				}
 			} else if($type == "awalgorithms") {
 				// DONE.
 

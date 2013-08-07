@@ -39,6 +39,7 @@
 		return $ret;
 	}
 
+	// Coming from an OOP background :P
 	function main() {
 		$scripts = getScripts();
 		$puzzles = getPuzzles();
