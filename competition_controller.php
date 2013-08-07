@@ -22,7 +22,7 @@ class EternaGETController extends EternaController {
 
 			if($type == "awscript") {
 				$data['ret'] = $algorithm_model->get_current_algorithm_queue();
-				$algorithm_model->resetQueue(100, -1); // change later!@#@!
+				$algorithm_model->resetQueue(100); // change later!@#@!
 				// get the queue of algorithms and reset the queue
 			} else if($type == "awpuzzle") {
 				$data['ret'] = $puzzle_model->get_current_puzzle_queue();

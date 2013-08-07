@@ -55,6 +55,28 @@ class EternaAlgorithmsModel{
 
 		return $algorithms;
 	}
+	
+	public function get_least_tested_algorithms($numalgorithms) {
+		$query = "SELECT n.title, n.created, algorithm.field_algorithm_rating_value AS rating, algorithm.field_algorithm_code_value AS code, algorithm.field_algorithm_votes_value AS numvotes, algorithm.field_algorithm_description_value AS description, algorithm.field_algorithm_times_tested_value AS timestested, algorithm.field_algorithm_tested_puzzles_value AS tested, u.uid AS uid, u.name AS username, u.picture AS userpicture, n.nid AS id, nr.body FROM content_type_algorithm_wars_algorithms algorithm LEFT JOIN node n ON algorithm.nid=n.nid LEFT JOIN node_revisions nr ON n.vid=nr.vid LEFT JOIN users u ON u.uid=n.uid WHERE n.status <> 0";
+		$order = "ORDER BY algorithm.field_algorithm_times_tested_value";
+		$limit = "LIMIT $numalgorithms";
+		$result = db_query("$query $order $limit");
+		$algos = array();
+		while($res = db_fetch_array($result)) {
+			array_push($algos, $res);
+		}
+
+		return $algos;
+	}
+
+	public function resetQueue($numalgorithms) {
+		$algos = get_least_tested_algorithms($numalgorithms);
+		$size = count($algos);
+		for($i = 0; $i < $size; $i++) {
+			$algo = $algos[$i];
+			add_algorithms_to_queue($algo["id"]);
+		}
+	}
 
 	//Gets the rating of a particular algorithm
 	public function get_algorithm_rating($id){
