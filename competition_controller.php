@@ -52,7 +52,8 @@ class EternaGETController extends EternaController {
 			}
 		} else if($type == "awupdate") {
 			// justin's cron is sending us data
-			// parse the data and send to the models
+			// send to algorithm model to also update matches table
+			 $algorithm_model->update_matches($params["data"], $puzzle_model);
 		}
 	}
 

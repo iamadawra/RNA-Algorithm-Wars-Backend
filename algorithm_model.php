@@ -262,6 +262,19 @@ class EternaAlgorithmsModel{
 		return set_rating($newAlgorithmRating, $aid);
 	}
 
+	public function update_matches($data, $puzzle_model) {
+		// data format:
+		/*
+			[
+			 	{nid:xxx, aid: xxx, eval_time: xxx, result: xxx, cause: xxx},
+			 	{nid:x22, aid: x22, eval_time: x22, result: x22, cause: x22}
+			]
+		keep nid, aid, result, date
+		*/
+		// add these info to the matches and also call update_algorithm_rating and update_puzzle_rating
+		// also call resetQueue for algorithm model and puzzle model
+	}
+
 	//Add algorithms to queue based on which algorithm has been tested the
 	//lowest getting first priority to get into the queue
 	// Bug Pitfall: Can't pop the first element if the puzzle has been tested on it
