@@ -25,22 +25,31 @@ class EternaGETController extends EternaController {
 		if($type == "awpuzzles") {
 			$func = $params["func"];
 			if($func == "reset") {
-				$algorithm_model->resetQueue(100); // 100 matches?
+				$puzzle_model->resetQueue($params["nummatches"], -1); // 100 matches?
 			} else if($func == "resetAll") {
-				$algorithm_model->reset_all_puzzles();
+				$puzzle_model->reset_all_puzzles();
 			} else if($func == "update") {
-				$algorithm_model->update_puzzle_rating($params["aid"], $params["pid"], $params["ascore"], $params["pscore"]);
+				$puzzle_model->update_puzzle_rating($params["aid"], $params["pid"], $params["ascore"], $params["pscore"]);
 			}
 		} else if($type == "awalgorithms") {
 			$func = $params["func"];
-			// resetQueue
-			// add_algorithm
-			// delete_algorithm
-			// modify_algorithm
-			// set_rating
-			// set_default_ratings_for_all
-			// update_algorithm_rating
-			// add_algorithms_to_queue
+			if($func == "reset") {
+				$algorithm_model->resetQueue($params["nummatches"]);
+			} else if($func == "add") {
+				$algorithm_model->add_algorithm($params, $params["uid"], $user_model);
+			} else if($func == "delete") {	
+				$algorithm_model->delete_algorithm($params["aid"]);
+			} else if($func == "modify") {
+				$algorithm_model->modify_algorithm($params["aid"], $params["source"]);
+			} else if($func == "setrating") {
+				$algorithm_model->set_rating($params["rating"], $params["aid"]);
+			} else if($func == "setall") {
+				$algorithm_model->set_default_ratings_for_all($params["defaultrating"]);
+			} else if($func == "update") {
+				$algorithm_model->update_algorithm_rating($params["aid"], $params["pid"], $params["ascore"], $params["pscore"]);
+			} else if($func == "addQueue") {
+				$algorithm_model->add_algorithms_to_queue($params["id"]);
+			}
 		} else if($type == "awupdate") {
 			// justin's cron is sending us data
 			// parse the data and send to the models
@@ -59,11 +68,11 @@ class EternaGETController extends EternaController {
 
 			if($type == "awscript") {
 				$data['ret'] = $algorithm_model->get_current_algorithm_queue();
-				$algorithm_model->resetQueue(100); // 100 matches?
+				$algorithm_model->resetQueue($params["nummatches"]); // 100 matches?
 				// DONE
 			} else if($type == "awpuzzle") {
 				$data['ret'] = $puzzle_model->get_current_puzzle_queue();
-				$puzzle_model->resetQueue(100, -1); // 100 matches?
+				$puzzle_model->resetQueue($params["nummatches"], -1); // 100 matches?
 				// get the queue of puzzles and reset the queue
 			} else if($type == "awpuzzles") {
 				// DONE
