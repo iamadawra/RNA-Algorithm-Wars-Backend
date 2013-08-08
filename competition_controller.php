@@ -10,6 +10,43 @@ class EternaGETController extends EternaController {
 		parent::__construct();
 	}
 
+	function post_on_process($params) {
+		// this function should be on_process,
+		// I just seperated to make it easier to read
+		global $user;
+
+		$ret = array();
+		$type = $params['type'];
+		$data = array();
+		$user_model = $this->get_model("EternaUserModel");
+		$algorithm_model = $this->get_model("EternaAlgorithmsModel");      
+		$puzzle_model = $this->get_model("EternaPuzzleModel");
+
+		if($type == "awpuzzles") {
+			$func = $params["func"];
+			if($func == "reset") {
+				$algorithm_model->resetQueue(100); // 100 matches?
+			} else if($func == "resetAll") {
+				$algorithm_model->reset_all_puzzles();
+			} else if($func == "update") {
+				$algorithm_model->update_puzzle_rating($params["aid"], $params["pid"], $params["ascore"], $params["pscore"]);
+			}
+		} else if($type == "awalgorithms") {
+			$func = $params["func"];
+			// resetQueue
+			// add_algorithm
+			// delete_algorithm
+			// modify_algorithm
+			// set_rating
+			// set_default_ratings_for_all
+			// update_algorithm_rating
+			// add_algorithms_to_queue
+		} else if($type == "awupdate") {
+			// justin's cron is sending us data
+			// parse the data and send to the models
+		}
+	}
+
 	function on_process($params) {
 		global $user;
 

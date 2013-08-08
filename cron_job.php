@@ -20,6 +20,9 @@
 	}
 
 	function sendData($scripts, $puzzles) {
+
+		// BUG FIX TO MAKE SURE THEY HAVEN"T BEEN TESTED ON EACH OTHER
+
 		$send = array();
 		for($i = 0; $i < count($scripts); $i++) {
 			$tmp = new stdClass();
