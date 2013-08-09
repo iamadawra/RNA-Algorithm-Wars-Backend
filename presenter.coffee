@@ -623,6 +623,78 @@
     )
 }
 
+@AlgorithmWars = {
+  get_puzzle : (_nid, success_cb) ->
+    url = Application.GET_URI
+    params = {type: "awpuzzles", nid:_nid};
+    AjaxManager.query("GET", url, params, (response) =>
+      EternaUtils.process_response(response, (data) =>
+        success_cb(data)
+      )
+    )
+
+  get_top_ranked_puzzles: (_num, success_cb) ->
+    url = Application.GET_URI
+    params = {type: "awpuzzles", func: "top", num:_num};
+    AjaxManager.query("GET", url, params, (response) =>
+      EternaUtils.process_response(response, (data) =>
+        success_cb(data)
+      )
+    )    
+
+  get_current_puzzle_queue: (success_cb) ->
+    url = Application.get_URI
+    params = {type: "awpuzzles", func: "queue"}
+    AjaxManager.query("GET", url, params, (response) =>
+      EternaUtils.process_response(response, (data) =>
+        success_cb(data)
+      )
+    )
+
+  get_algorithm : (_nid, success_cb) ->
+    url = Application.GET_URI
+    params = {type: "awalgorithms", nid:_nid};
+    AjaxManager.query("GET", url, params, (response) =>
+      EternaUtils.process_response(response, (data) =>
+        success_cb(data)
+      )
+    )
+
+  get_top_ranked_algorithms: (_num, success_cb) ->
+    url = Application.GET_URI
+    params = {type: "awalgorithms", func: "top", num:_num};
+    AjaxManager.query("GET", url, params, (response) =>
+      EternaUtils.process_response(response, (data) =>
+        success_cb(data)
+      )
+    )    
+
+  get_current_algorithm_queue: (success_cb) ->
+    url = Application.get_URI
+    params = {type: "awalgorithms", func: "queue"}
+    AjaxManager.query("GET", url, params, (response) =>
+      EternaUtils.process_response(response, (data) =>
+        success_cb(data)
+      )
+    )
+
+  post_algorithm: (_title, _body, _code, _description, _input, success_cb) ->
+    url = Application.GET_URI
+    params = {}
+    params['title'] = _title
+    params['body'] = _body
+    params['code'] = _code
+    params['input'] = _input
+    params['author'] = {id:Application.CURRENT_USER.uid, name:Application.CURRENT_USER.name}
+    params['description'] = _description
+    AjaxManager.query("POST", url, params, (response) =>
+      EternaUtils.process_response(response, (data) =>
+        success_cb(data)
+      )
+    )
+
+}
+
 @Script = {
   get_script_lists : (_skip, _size, _search, success_cb) ->
     url = Application.GET_URI
