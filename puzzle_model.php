@@ -68,6 +68,11 @@ class EternaPuzzleModel {
 
   }
 
+  //Get top ranked puzzles
+  public function get_top_ranked_puzzles($numberOfPuzzles){
+    //numberOfPuzzles = number of top puzzles required
+  }
+
   function get_rated_puzzles($min, $max) {
     $query = "SELECT n.title, n.created, puz.field_puzzle_objective_value AS object, puz.field_puzzle_rna_type_value AS rna_type, u.uid AS uid, u.name AS username, u.picture AS userpicture, puz.field_reward_puzzle_value AS reward, puz.field_structure_value AS secstruct, puz.field_puzzle_solved_by_bot_value AS 'solved-by-bot', puz.field_puzzle_num_cleared_value AS 'num-cleared', n.nid AS id, puz.field_puzzle_locks_value AS locks, puz.field_begin_seq_value AS beginseq, puz.field_puzzle_tested_value AS tested, puz.field_puzzle_rating_value AS rating, puz.field_puzzle_numvotes_value AS numvotes, puz.field_puzzle_numtested_value AS numtested, puz.field_use_tails_value AS usetails, puz.field_constraints_puzzle_value AS constraints, puz.field_scoring_puzzle_value AS scoring, puz.field_folder_puzzle_value AS folder, puz.field_made_by_player_value AS 'made-by-player',puz.field_tutorial_level_puzzle_value AS 'tutorial-level', puz.field_ui_specs_puzzle_value AS 'ui-specs', puz.field_puzzle_type_value AS 'type', puz.field_puzzle_last_synthesis_value AS 'last-round', puz.field_next_puzzle_value AS 'next-puzzle', field_puzzle_objective_value AS objective, field_puzzle_check_hairpin_value AS check_hairpin, field_puzzle_cloud_round_value AS cloud_round FROM content_type_puzzle puz LEFT JOIN node n ON puz.nid=n.nid LEFT JOIN node_revisions nr ON n.vid=nr.vid LEFT JOIN users u ON u.uid=n.uid WHERE n.status <> 0 AND puz.field_puzzle_type_value != \"Experimental\"";
     if($max != -1) $where = "AND puz.field_puzzle_rating_value >= " . $min . " AND puz.field_puzzle_rating_value < " . $max;

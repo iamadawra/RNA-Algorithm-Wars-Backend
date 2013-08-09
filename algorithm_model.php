@@ -113,6 +113,11 @@ class EternaAlgorithmsModel{
 		return $next_algorithm_id
 	}
 
+	//Get top ranked algorithms
+	public function get_top_ranked_algorithms($numberOfAlgorithms){
+		//numberOfAlgorithms =  numberOfTopAlgorithms
+	}
+
 	##################################
 	##  Setter Methods
 	##################################
