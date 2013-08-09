@@ -10,6 +10,8 @@ class EternaGETController extends EternaController {
 		parent::__construct();
 	}
 
+
+	// POST Controller methods
 	function post_on_process($params) {
 		// this function should be on_process,
 		// I just seperated to make it easier to read
@@ -57,6 +59,8 @@ class EternaGETController extends EternaController {
 		}
 	}
 
+
+	//GET Controller Methods
 	function on_process($params) {
 		global $user;
 
